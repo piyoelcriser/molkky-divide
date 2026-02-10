@@ -1,390 +1,392 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>モルック 人数振り分け</title>
-    <style>
-        :root {
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
-            --apple-blue: #0071e3;
-            --apple-dark: #1d1d1f;
-            --apple-gray: #86868b;
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(255, 255, 255, 0.5);
-        }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>モルック 人数振り分け</title>
+    <style>
+        :root {
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+            --apple-blue: #0071e3;
+            --apple-dark: #1d1d1f;
+            --apple-gray: #86868b;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+        }
 
-        /* すべての要素に対してbox-sizingを適用 
-           これでパディングやボーダーを含めた「全体の幅」が指定通りになります
-        */
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
+        /* すべての要素に対してbox-sizingを適用 
+           これでパディングやボーダーを含めた「全体の幅」が指定通りになります
+        */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: var(--apple-dark);
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 15px;
-        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--apple-dark);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 15px;
+        }
 
-        .card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 24px 20px;
-            width: 100%;
-            max-width: 420px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px 20px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
 
-        h1 {
-            font-size: 20px;
-            font-weight: 700;
-            text-align: center;
-            margin: 0 0 24px 0;
-        }
+        h1 {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 24px 0;
+        }
 
-        /* 入力エリア・プリセットボタン共通のグリッド設定 */
-        .grid-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%; /* これで親の幅いっぱいになる */
-            margin-bottom: 20px;
-        }
+        /* 入力エリア・プリセットボタン共通のグリッド設定 */
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%; /* これで親の幅いっぱいになる */
+            margin-bottom: 20px;
+        }
 
-        .input-container {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
+        .input-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
 
-        label.input-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--apple-gray);
-            margin-bottom: 6px;
-            padding-left: 2px;
-        }
+        label.input-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--apple-gray);
+            margin-bottom: 6px;
+            padding-left: 2px;
+        }
 
-        input[type="number"] {
-            background: #fff;
-            border: 1px solid #d2d2d7;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            width: 100%; /* コンテナ幅いっぱいに固定 */
-            outline: none;
-            -webkit-appearance: none;
-        }
+        input[type="number"] {
+            background: #fff;
+            border: 1px solid #d2d2d7;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--apple-dark);
+            width: 100%; /* コンテナ幅いっぱいに固定 */
+            outline: none;
+            -webkit-appearance: none;
+        }
 
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            margin: 0 0 12px 0;
-            color: var(--apple-dark);
-        }
+        .section-title {
+            font-size: 13px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: var(--apple-dark);
+        }
 
-        /* プリセットボタン (タイマン・三つ巴) */
-        .btn {
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 14px 0;
-            cursor: pointer;
-            border: 1.5px solid transparent;
-            text-align: center;
-            width: 100%; /* グリッド内で幅を揃える */
-            transition: all 0.2s ease;
-        }
+        /* プリセットボタン (タイマン・三つ巴) */
+        .btn {
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            padding: 14px 0;
+            cursor: pointer;
+            border: 1.5px solid transparent;
+            text-align: center;
+            width: 100%; /* グリッド内で幅を揃える */
+            transition: all 0.2s ease;
+        }
 
-        .btn-taiman.on { background: #0071e3; color: #fff; }
-        .btn-taiman.off { background: #fff; color: #0071e3; border-color: #0071e3; }
-        .btn-mitsudomoe.on { background: #3b82f6; color: #fff; }
-        .btn-mitsudomoe.off { background: #fff; color: #3b82f6; border-color: #3b82f6; }
+        .btn-taiman.on { background: #0071e3; color: #fff; }
+        .btn-taiman.off { background: #fff; color: #0071e3; border-color: #0071e3; }
+        .btn-mitsudomoe.on { background: #3b82f6; color: #fff; }
+        .btn-mitsudomoe.off { background: #fff; color: #3b82f6; border-color: #3b82f6; }
 
-        /* 形式選択リスト */
-        .format-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
+        /* 形式選択リスト */
+        .format-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-        .format-row {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
+        .format-row {
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
 
-        .row-number {
-            width: 20px;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--apple-blue);
-            margin-right: 15px;
-            flex-shrink: 0;
-            text-align: center;
-        }
+        .row-number {
+            width: 20px;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--apple-blue);
+            margin-right: 15px;
+            flex-shrink: 0;
+            text-align: center;
+        }
 
-        /* ボタンが1つでも2つでも、右端のラインを親要素に揃えるための設定 */
-        .format-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 基本は2列 */
-            gap: 8px;
-            flex-grow: 1; /* 残りの幅をすべて使う */
-        }
+        /* ボタンが1つでも2つでも、右端のラインを親要素に揃えるための設定 */
+        .format-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* 基本は2列 */
+            gap: 8px;
+            flex-grow: 1; /* 残りの幅をすべて使う */
+        }
 
-        /* ボタンが1つしかない（2〜4人）の場合は、2列分を結合して右端まで伸ばす */
-        .format-buttons.single {
-            grid-template-columns: 1fr;
-        }
+        /* ボタンが1つしかない（2〜4人）の場合は、2列分を結合して右端まで伸ばす */
+        .format-buttons.single {
+            grid-template-columns: 1fr;
+        }
 
-        .format-item {
-            background: #fff;
-            border: 1px solid #d2d2d7;
-            border-radius: 10px;
-            height: 44px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin: 0;
-        }
+        .format-item {
+            background: #fff;
+            border: 1px solid #d2d2d7;
+            border-radius: 10px;
+            height: 44px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--apple-dark);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            width: 100%;
+            margin: 0;
+        }
 
-        .format-item:has(input:checked) {
-            background: var(--apple-dark);
-            color: #fff;
-            border-color: var(--apple-dark);
-        }
+        .format-item:has(input:checked) {
+            background: var(--apple-dark);
+            color: #fff;
+            border-color: var(--apple-dark);
+        }
 
-        .format-item input { display: none; }
+        .format-item input { display: none; }
 
-        /* 結果エリア */
-        #resultArea {
-            margin-top: 24px;
-            border-top: 1px solid #e5e5e5;
-            padding-top: 16px;
-        }
+        /* 結果エリア */
+        #resultArea {
+            margin-top: 24px;
+            border-top: 1px solid #e5e5e5;
+            padding-top: 16px;
+        }
 
-        .court-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-            border: 1px solid #f2f2f2;
-            width: 100%;
-        }
+        .court-card {
+            background: #fff;
+            border-radius: 14px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f2f2f2;
+            width: 100%;
+        }
 
-        .court-info { display: flex; flex-direction: column; }
-        .court-name { font-size: 10px; font-weight: 700; color: var(--apple-gray); margin-bottom: 2px; }
-        .court-format { font-size: 14px; font-weight: 700; color: var(--apple-dark); }
-        .court-count { background: #f5f5f7; color: var(--apple-dark); font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
+        .court-info { display: flex; flex-direction: column; }
+        .court-name { font-size: 10px; font-weight: 700; color: var(--apple-gray); margin-bottom: 2px; }
+        .court-format { font-size: 14px; font-weight: 700; color: var(--apple-dark); }
+        .court-count { background: #f5f5f7; color: var(--apple-dark); font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
 
-        .empty-text {
-            text-align: center;
-            color: var(--apple-gray);
-            font-size: 13px;
-            padding: 30px 0;
-        }
-    </style>
+        .empty-text {
+            text-align: center;
+            color: var(--apple-gray);
+            font-size: 13px;
+            padding: 30px 0;
+        }
+    </style>
 </head>
 <body>
 
 <div class="card">
-    <h1>モルック 人数振り分け</h1>
+    <h1>モルック 人数振り分け</h1>
 
-    <div class="grid-row">
-        <div class="input-container">
-            <label class="input-label">コート数</label>
-            <input type="number" id="courtCount" placeholder="入力" min="1" inputmode="numeric">
-        </div>
-        <div class="input-container">
-            <label class="input-label">人数</label>
-            <input type="number" id="memberCount" placeholder="入力" min="1" inputmode="numeric">
-        </div>
-    </div>
+    <div class="grid-row">
+        <div class="input-container">
+            <label class="input-label">コート数</label>
+            <input type="number" id="courtCount" placeholder="入力" min="1" inputmode="numeric">
+        </div>
+        <div class="input-container">
+            <label class="input-label">人数</label>
+            <input type="number" id="memberCount" placeholder="入力" min="1" inputmode="numeric">
+        </div>
+    </div>
 
-    <p class="section-title">許可する形式</p>
+    <p class="section-title">許可する形式</p>
 
-    <div class="grid-row">
-        <button id="btnTaiman" onclick="togglePreset('taiman')" class="btn btn-taiman on">タイマン</button>
-        <button id="btnMitsudomoe" onclick="togglePreset('mitsudomoe')" class="btn btn-mitsudomoe on">三つ巴</button>
-    </div>
-    
-    <div class="format-list">
-        <div class="format-row">
-            <div class="row-number">2</div>
-            <div class="format-buttons single">
-                <label class="format-item"><input type="checkbox" checked value="2" data-type="taiman" data-label="1 vs 1" class="format-check">1 vs 1</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">3</div>
-            <div class="format-buttons single">
-                <label class="format-item"><input type="checkbox" checked value="3" data-type="mitsudomoe" data-label="1 vs 1 vs 1" class="format-check">1 vs 1 vs 1</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">4</div>
-            <div class="format-buttons single">
-                <label class="format-item"><input type="checkbox" checked value="4" data-type="taiman" data-label="2 vs 2" class="format-check">2 vs 2</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">5</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="5" data-type="mitsudomoe" data-label="1 vs 2 vs 2" class="format-check">1 vs 2 vs 2</label>
-                <label class="format-item"><input type="checkbox" checked value="5" data-type="taiman" data-label="2 vs 3" class="format-check">2 vs 3</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">6</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="6" data-type="mitsudomoe" data-label="2 vs 2 vs 2" class="format-check">2 vs 2 vs 2</label>
-                <label class="format-item"><input type="checkbox" checked value="6" data-type="taiman" data-label="3 vs 3" class="format-check">3 vs 3</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">7</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="7" data-type="mitsudomoe" data-label="2 vs 2 vs 3" class="format-check">2 vs 2 vs 3</label>
-                <label class="format-item"><input type="checkbox" checked value="7" data-type="taiman" data-label="3 vs 4" class="format-check">3 vs 4</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">8</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="8" data-type="mitsudomoe" data-label="2 vs 3 vs 3" class="format-check">2 vs 3 vs 3</label>
-                <label class="format-item"><input type="checkbox" checked value="8" data-type="taiman" data-label="4 vs 4" class="format-check">4 vs 4</label>
-            </div>
-        </div>
-    </div>
+    <div class="grid-row">
+        <button id="btnTaiman" onclick="togglePreset('taiman')" class="btn btn-taiman on">タイマン</button>
+        <button id="btnMitsudomoe" onclick="togglePreset('mitsudomoe')" class="btn btn-mitsudomoe on">三つ巴</button>
+    </div>
+    
+    <div class="format-list">
+        <div class="format-row">
+            <div class="row-number">2</div>
+            <div class="format-buttons single">
+                <label class="format-item"><input type="checkbox" checked value="2" data-type="taiman" data-label="1 vs 1" class="format-check">1 vs 1</label>
+            </div>
+        </div>
+        <div class="format-row">
+            <div class="row-number">3</div>
+            <div class="format-buttons single">
+                <label class="format-item"><input type="checkbox" checked value="3" data-type="mitsudomoe" data-label="1 vs 1 vs 1" class="format-check">1 vs 1 vs 1</label>
+            </div>
+        </div>
+        <div class="format-row">
+            <div class="row-number">4</div>
+            <div class="format-buttons single">
+                <label class="format-item"><input type="checkbox" checked value="4" data-type="taiman" data-label="2 vs 2" class="format-check">2 vs 2</label>
+            </div>
+        </div>
+        <div class="format-row">
+            <div class="row-number">5</div>
+            <div class="format-buttons">
+                <label class="format-item"><input type="checkbox" checked value="5" data-type="mitsudomoe" data-label="1 vs 2 vs 2" class="format-check">1 vs 2 vs 2</label>
+                <label class="format-item"><input type="checkbox" checked value="5" data-type="taiman" data-label="2 vs 3" class="format-check">2 vs 3</label>
+            </div>
+        </div>
+        <div class="format-row">
+            <div class="row-number">6</div>
+            <div class="format-buttons">
+                <label class="format-item"><input type="checkbox" checked value="6" data-type="mitsudomoe" data-label="2 vs 2 vs 2" class="format-check">2 vs 2 vs 2</label>
+                <label class="format-item"><input type="checkbox" checked value="6" data-type="taiman" data-label="3 vs 3" class="format-check">3 vs 3</label>
+            </div>
+        </div>
+        <div class="format-row">
+            <div class="row-number">7</div>
+            <div class="format-buttons">
+                <label class="format-item"><input type="checkbox" checked value="7" data-type="mitsudomoe" data-label="2 vs 2 vs 3" class="format-check">2 vs 2 vs 3</label>
+                <label class="format-item"><input type="checkbox" checked value="7" data-type="taiman" data-label="3 vs 4" class="format-check">3 vs 4</label>
+            </div>
+        </div>
+        <div class="format-row">
+            <div class="row-number">8</div>
+            <div class="format-buttons">
+                <label class="format-item"><input type="checkbox" checked value="8" data-type="mitsudomoe" data-label="2 vs 3 vs 3" class="format-check">2 vs 3 vs 3</label>
+                <label class="format-item"><input type="checkbox" checked value="8" data-type="taiman" data-label="4 vs 4" class="format-check">4 vs 4</label>
+            </div>
+        </div>
+    </div>
 
-    <div id="resultArea"></div>
+    <div id="resultArea"></div>
 </div>
 
 <script>
-    const courtInput = document.getElementById('courtCount');
-    const memberInput = document.getElementById('memberCount');
-    const checkboxes = document.querySelectorAll('.format-check');
-    const resultArea = document.getElementById('resultArea');
-    const btnTaiman = document.getElementById('btnTaiman');
-    const btnMitsudomoe = document.getElementById('btnMitsudomoe');
+    const courtInput = document.getElementById('courtCount');
+    const memberInput = document.getElementById('memberCount');
+    const checkboxes = document.querySelectorAll('.format-check');
+    const resultArea = document.getElementById('resultArea');
+    const btnTaiman = document.getElementById('btnTaiman');
+    const btnMitsudomoe = document.getElementById('btnMitsudomoe');
 
-    let taimanActive = true;
-    let mitsudomoeActive = true;
+    let taimanActive = true;
+    let mitsudomoeActive = true;
 
-    [courtInput, memberInput].forEach(el => el.addEventListener('input', calculate));
-    checkboxes.forEach(el => el.addEventListener('change', () => {
-        syncButtonStateWithChecks();
-        calculate();
-    }));
+    [courtInput, memberInput].forEach(el => el.addEventListener('input', calculate));
+    checkboxes.forEach(el => el.addEventListener('change', () => {
+        syncButtonStateWithChecks();
+        calculate();
+    }));
 
-    function togglePreset(type) {
-        if (type === 'taiman') {
-            taimanActive = !taimanActive;
-            checkboxes.forEach(cb => { if(cb.dataset.type === 'taiman') cb.checked = taimanActive; });
-        } else {
-            mitsudomoeActive = !mitsudomoeActive;
-            checkboxes.forEach(cb => { if(cb.dataset.type === 'mitsudomoe') cb.checked = mitsudomoeActive; });
-        }
-        updateButtonUI();
-        calculate();
-    }
+    function togglePreset(type) {
+        if (type === 'taiman') {
+            taimanActive = !taimanActive;
+            checkboxes.forEach(cb => { if(cb.dataset.type === 'taiman') cb.checked = taimanActive; });
+        } else {
+            mitsudomoeActive = !mitsudomoeActive;
+            checkboxes.forEach(cb => { if(cb.dataset.type === 'mitsudomoe') cb.checked = mitsudomoeActive; });
+        }
+        updateButtonUI();
+        calculate();
+    }
 
-    function syncButtonStateWithChecks() {
-        const taimanChecks = Array.from(checkboxes).filter(cb => cb.dataset.type === 'taiman');
-        const mitsudomoeChecks = Array.from(checkboxes).filter(cb => cb.dataset.type === 'mitsudomoe');
-        taimanActive = taimanChecks.some(cb => cb.checked);
-        mitsudomoeActive = mitsudomoeChecks.some(cb => cb.checked);
-        updateButtonUI();
-    }
+    function syncButtonStateWithChecks() {
+        const taimanChecks = Array.from(checkboxes).filter(cb => cb.dataset.type === 'taiman');
+        const mitsudomoeChecks = Array.from(checkboxes).filter(cb => cb.dataset.type === 'mitsudomoe');
+        taimanActive = taimanChecks.some(cb => cb.checked);
+        mitsudomoeActive = mitsudomoeChecks.some(cb => cb.checked);
+        updateButtonUI();
+    }
 
-    function updateButtonUI() {
-        btnTaiman.className = `btn btn-taiman ${taimanActive ? 'on' : 'off'}`;
-        btnMitsudomoe.className = `btn btn-mitsudomoe ${mitsudomoeActive ? 'on' : 'off'}`;
-    }
+    function updateButtonUI() {
+        btnTaiman.className = `btn btn-taiman ${taimanActive ? 'on' : 'off'}`;
+        btnMitsudomoe.className = `btn btn-mitsudomoe ${mitsudomoeActive ? 'on' : 'off'}`;
+    }
 
-    function calculate() {
-        const maxCourts = parseInt(courtInput.value);
-        const totalMembers = parseInt(memberInput.value);
-        const allowedFormats = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => ({ label: cb.dataset.label, size: parseInt(cb.value) }));
+    function calculate() {
+        const maxCourts = parseInt(courtInput.value);
+        const totalMembers = parseInt(memberInput.value);
+        const allowedFormats = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => ({ label: cb.dataset.label, size: parseInt(cb.value) }));
 
-        if (!maxCourts || !totalMembers || allowedFormats.length === 0) {
-            resultArea.innerHTML = '<p class="empty-text">数値を入力してください</p>';
-            return;
-        }
+        if (!maxCourts || !totalMembers || allowedFormats.length === 0) {
+            resultArea.innerHTML = '<p class="empty-text">数値を入力してください</p>';
+            return;
+        }
 
-        const avg = totalMembers / maxCourts;
-        let bestResult = null;
-        let minVariance = Infinity;
+        const avg = totalMembers / maxCourts;
+        let bestResult = null;
+        let minVariance = Infinity;
 
-        function solve(remaining, courtIdx, currentAssignments) {
-            if (courtIdx === maxCourts) {
-                if (remaining === 0) {
-                    const variance = currentAssignments.reduce((acc, cur) => acc + Math.pow(cur.size - avg, 2), 0);
-                    if (variance < minVariance) {
-                        minVariance = variance;
-                        bestResult = [...currentAssignments];
-                    }
-                }
-                return;
-            }
+        function solve(remaining, courtIdx, currentAssignments) {
+            if (courtIdx === maxCourts) {
+                if (remaining === 0) {
+                    const variance = currentAssignments.reduce((acc, cur) => acc + Math.pow(cur.size - avg, 2), 0);
+                    if (variance < minVariance) {
+                        minVariance = variance;
+                        bestResult = [...currentAssignments];
+                    }
+                }
+                return;
+            }
 
-            const sortedFormats = [...allowedFormats].sort((a, b) => Math.abs(a.size - avg) - Math.abs(b.size - avg));
-            for (const format of sortedFormats) {
-                if (remaining - format.size < 0) continue;
-                solve(remaining - format.size, courtIdx + 1, [...currentAssignments, format]);
-                if (minVariance === 0) return;
-            }
-        }
+            const sortedFormats = [...allowedFormats].sort((a, b) => Math.abs(a.size - avg) - Math.abs(b.size - avg));
+            for (const format of sortedFormats) {
+                if (remaining - format.size < 0) continue;
+                solve(remaining - format.size, courtIdx + 1, [...currentAssignments, format]);
+                if (minVariance === 0) return;
+            }
+        }
 
-        solve(totalMembers, 0, []);
+        solve(totalMembers, 0, []);
 
-        if (!bestResult) {
-            resultArea.innerHTML = '<p class="empty-text" style="color: #ff3b30;">組み合わせなし</p>';
-            return;
-        }
+        if (!bestResult) {
+            resultArea.innerHTML = '<p class="empty-text" style="color: #ff3b30;">組み合わせなし</p>';
+            return;
+        }
 
-        let html = '';
-        bestResult.sort((a, b) => a.size - b.size).forEach((item, index) => {
-            const courtName = String.fromCharCode(65 + index);
-            html += `
-                <div class="court-card">
-                    <div class="court-info">
-                        <span class="court-name">コート ${courtName}</span>
-                        <span class="court-format">${item.label}</span>
-                    </div>
-                    <span class="court-count">${item.size}人</span>
-                </div>`;
-        });
-        resultArea.innerHTML = html;
-    }
+        let html = '';
+        bestResult.sort((a, b) => a.size - b.size).forEach((item, index) => {
+            const courtName = String.fromCharCode(65 + index);
+            html += `
+                <div class="court-card">
+                    <div class="court-info">
+                        <span class="court-name">コート ${courtName}</span>
+                        <span class="court-format">${item.label}</span>
+                    </div>
+                    <span class="court-count">${item.size}人</span>
+                </div>`;
+        });
+        resultArea.innerHTML = html;
+    }
 
-    calculate();
+    calculate();
 </script>
 
 </body>
 </html>
+
+
