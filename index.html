@@ -14,9 +14,6 @@
             --glass-border: rgba(255, 255, 255, 0.5);
         }
 
-        /* すべての要素に対してbox-sizingを適用 
-           これでパディングやボーダーを含めた「全体の幅」が指定通りになります
-        */
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
@@ -44,6 +41,7 @@
             width: 100%;
             max-width: 420px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            align-self: flex-start;
         }
 
         h1 {
@@ -53,337 +51,319 @@
             margin: 0 0 24px 0;
         }
 
-        /* 入力エリア・プリセットボタン共通のグリッド設定 */
-        .grid-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            width: 100%; /* これで親の幅いっぱいになる */
-            margin-bottom: 20px;
+        #setupSection, #drawSection, #resultSection {
+            display: none;
+            animation: fadeIn 0.3s ease;
         }
 
-        .input-container {
-            display: flex;
-            flex-direction: column;
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .grid-row { 
+            display: flex; 
+            gap: 12px; 
+            margin-bottom: 20px; 
             width: 100%;
         }
 
-        label.input-label {
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--apple-gray);
-            margin-bottom: 6px;
-            padding-left: 2px;
+        .input-container { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            min-width: 0;
         }
 
-        input[type="number"] {
-            background: #fff;
-            border: 1px solid #d2d2d7;
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            color: var(--apple-dark);
-            width: 100%; /* コンテナ幅いっぱいに固定 */
-            outline: none;
-            -webkit-appearance: none;
+        label.input-label { 
+            font-size: 11px; 
+            font-weight: 700; 
+            color: var(--apple-gray); 
+            margin-bottom: 6px; 
+            padding-left: 2px; 
         }
 
-        .section-title {
-            font-size: 13px;
-            font-weight: 700;
-            margin: 0 0 12px 0;
-            color: var(--apple-dark);
+        input[type="number"] { 
+            background: #fff; 
+            border: 1px solid #d2d2d7; 
+            border-radius: 12px; 
+            padding: 12px; 
+            font-size: 16px; 
+            font-weight: 600; 
+            outline: none; 
+            width: 100%;
         }
 
-        /* プリセットボタン (タイマン・三つ巴) */
-        .btn {
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            padding: 14px 0;
-            cursor: pointer;
-            border: 1.5px solid transparent;
-            text-align: center;
-            width: 100%; /* グリッド内で幅を揃える */
-            transition: all 0.2s ease;
+        .btn { 
+            flex: 1;
+            border-radius: 12px; 
+            font-size: 14px; 
+            font-weight: 600; 
+            padding: 14px 0; 
+            cursor: pointer; 
+            border: 1.5px solid transparent; 
+            text-align: center; 
+            transition: all 0.2s ease; 
         }
-
         .btn-taiman.on { background: #0071e3; color: #fff; }
         .btn-taiman.off { background: #fff; color: #0071e3; border-color: #0071e3; }
         .btn-mitsudomoe.on { background: #3b82f6; color: #fff; }
         .btn-mitsudomoe.off { background: #fff; color: #3b82f6; border-color: #3b82f6; }
 
-        /* 形式選択リスト */
-        .format-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .format-row {
-            display: flex;
-            align-items: center;
-            width: 100%;
-        }
-
-        .row-number {
-            width: 20px;
-            font-size: 16px;
-            font-weight: 800;
-            color: var(--apple-blue);
-            margin-right: 15px;
-            flex-shrink: 0;
-            text-align: center;
-        }
-
-        /* ボタンが1つでも2つでも、右端のラインを親要素に揃えるための設定 */
-        .format-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr; /* 基本は2列 */
-            gap: 8px;
-            flex-grow: 1; /* 残りの幅をすべて使う */
-        }
-
-        /* ボタンが1つしかない（2〜4人）の場合は、2列分を結合して右端まで伸ばす */
-        .format-buttons.single {
-            grid-template-columns: 1fr;
-        }
-
-        .format-item {
-            background: #fff;
-            border: 1px solid #d2d2d7;
-            border-radius: 10px;
-            height: 44px;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--apple-dark);
+        .format-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+        .format-row { display: flex; align-items: center; }
+        .row-number { width: 24px; font-size: 16px; font-weight: 800; color: var(--apple-blue); margin-right: 12px; text-align: center; }
+        .format-buttons { display: flex; gap: 8px; flex-grow: 1; }
+        .format-item { 
+            flex: 1;
+            background: #fff; 
+            border: 1px solid #d2d2d7; 
+            border-radius: 10px; 
+            height: 44px; 
+            font-size: 13px; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            width: 100%;
-            margin: 0;
         }
-
-        .format-item:has(input:checked) {
-            background: var(--apple-dark);
-            color: #fff;
-            border-color: var(--apple-dark);
-        }
-
+        .format-item:has(input:checked) { background: var(--apple-dark); color: #fff; border-color: var(--apple-dark); }
         .format-item input { display: none; }
 
-        /* 結果エリア */
-        #resultArea {
-            margin-top: 24px;
-            border-top: 1px solid #e5e5e5;
-            padding-top: 16px;
-        }
+        .draw-box { background: #fff; border-radius: 24px; padding: 30px 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        .draw-item { margin-bottom: 25px; }
+        .draw-label { font-size: 14px; color: var(--apple-gray); font-weight: 700; margin-bottom: 8px; }
+        .draw-value-large { font-size: 80px; color: var(--apple-blue); font-weight: 900; line-height: 1; display: flex; flex-direction: column; align-items: center; }
+        .solo-text { font-size: 20px; color: var(--apple-gray); font-weight: 600; line-height: 1; margin-top: 5px; }
+        .draw-format-box { border-top: 1px solid #f2f2f7; padding-top: 20px; }
+        .draw-format-value { font-size: 16px; font-weight: 700; }
+        .counter { font-size: 13px; color: var(--apple-gray); margin-bottom: 15px; font-weight: 600; text-align: center; }
 
-        .court-card {
-            background: #fff;
-            border-radius: 14px;
-            padding: 14px 16px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-            border: 1px solid #f2f2f2;
-            width: 100%;
-        }
+        .res-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+        .res-item { background: #fff; padding: 12px 16px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #eee; }
+        .res-idx { font-weight: 800; color: var(--apple-gray); font-size: 12px; width: 30px; }
+        .res-main { flex-grow: 1; font-weight: 700; font-size: 14px; }
+        .res-sub { font-size: 10px; color: var(--apple-gray); text-align: right; line-height: 1.2; }
 
-        .court-info { display: flex; flex-direction: column; }
-        .court-name { font-size: 10px; font-weight: 700; color: var(--apple-gray); margin-bottom: 2px; }
-        .court-format { font-size: 14px; font-weight: 700; color: var(--apple-dark); }
-        .court-count { background: #f5f5f7; color: var(--apple-dark); font-size: 13px; font-weight: 700; padding: 6px 12px; border-radius: 8px; }
-
-        .empty-text {
-            text-align: center;
-            color: var(--apple-gray);
-            font-size: 13px;
-            padding: 30px 0;
-        }
+        .main-button { background: var(--apple-blue); color: #fff; border: none; border-radius: 16px; width: 100%; padding: 18px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 113, 227, 0.3); margin-bottom: 12px; }
+        .main-button:active { transform: scale(0.98); }
+        
+        .secondary-button { background: #fff; color: var(--apple-blue); border: 1.5px solid var(--apple-blue); border-radius: 16px; width: 100%; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: none; }
+        .secondary-button:active { background: #f0f7ff; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h1>モルック 人数振り分け</h1>
-
-    <div class="grid-row">
-        <div class="input-container">
-            <label class="input-label">コート数</label>
-            <input type="number" id="courtCount" placeholder="入力" min="1" inputmode="numeric">
+    <div id="setupSection" style="display: block;">
+        <h1>モルック 人数振り分け</h1>
+        <div class="grid-row">
+            <div class="input-container">
+                <label class="input-label">コート数</label>
+                <input type="number" id="courtCount" placeholder="入力" min="1" inputmode="numeric">
+            </div>
+            <div class="input-container">
+                <label class="input-label">人数</label>
+                <input type="number" id="memberCount" placeholder="入力" min="1" inputmode="numeric">
+            </div>
         </div>
-        <div class="input-container">
-            <label class="input-label">人数</label>
-            <input type="number" id="memberCount" placeholder="入力" min="1" inputmode="numeric">
+        <p style="font-size:13px; font-weight:700; margin:0 0 12px 0;">許可する形式</p>
+        <div class="grid-row">
+            <button id="btnTaiman" onclick="togglePreset('taiman')" class="btn btn-taiman on">タイマン</button>
+            <button id="btnMitsudomoe" onclick="togglePreset('mitsudomoe')" class="btn btn-mitsudomoe on">三つ巴</button>
         </div>
+        <div class="format-list">
+            <div class="format-row"><div class="row-number">2</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="2" data-type="taiman" data-label="1 vs 1" class="format-check">1 vs 1</label></div></div>
+            <div class="format-row"><div class="row-number">3</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="3" data-type="mitsudomoe" data-label="1 vs 1 vs 1" class="format-check">1 vs 1 vs 1</label></div></div>
+            <div class="format-row"><div class="row-number">4</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="4" data-type="taiman" data-label="2 vs 2" class="format-check">2 vs 2</label></div></div>
+            <div class="format-row"><div class="row-number">5</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="5" data-type="mitsudomoe" data-label="1 vs 2 vs 2" class="format-check">1 vs 2 vs 2</label><label class="format-item"><input type="checkbox" checked value="5" data-type="taiman" data-label="2 vs 3" class="format-check">2 vs 3</label></div></div>
+            <div class="format-row"><div class="row-number">6</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="6" data-type="mitsudomoe" data-label="2 vs 2 vs 2" class="format-check">2 vs 2 vs 2</label><label class="format-item"><input type="checkbox" checked value="6" data-type="taiman" data-label="3 vs 3" class="format-check">3 vs 3</label></div></div>
+            <div class="format-row"><div class="row-number">7</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="7" data-type="mitsudomoe" data-label="2 vs 2 vs 3" class="format-check">2 vs 2 vs 3</label><label class="format-item"><input type="checkbox" checked value="7" data-type="taiman" data-label="3 vs 4" class="format-check">3 vs 4</label></div></div>
+            <div class="format-row"><div class="row-number">8</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="8" data-type="mitsudomoe" data-label="2 vs 3 vs 3" class="format-check">2 vs 3 vs 3</label><label class="format-item"><input type="checkbox" checked value="8" data-type="taiman" data-label="4 vs 4" class="format-check">4 vs 4</label></div></div>
+        </div>
+        <button class="main-button" onclick="startLottery()">スタート</button>
+        <button id="viewLastResultBtn" class="secondary-button" onclick="showResultSection()">前回の結果</button>
     </div>
 
-    <p class="section-title">許可する形式</p>
-
-    <div class="grid-row">
-        <button id="btnTaiman" onclick="togglePreset('taiman')" class="btn btn-taiman on">タイマン</button>
-        <button id="btnMitsudomoe" onclick="togglePreset('mitsudomoe')" class="btn btn-mitsudomoe on">三つ巴</button>
-    </div>
-    
-    <div class="format-list">
-        <div class="format-row">
-            <div class="row-number">2</div>
-            <div class="format-buttons single">
-                <label class="format-item"><input type="checkbox" checked value="2" data-type="taiman" data-label="1 vs 1" class="format-check">1 vs 1</label>
+    <div id="drawSection">
+        <h1 style="text-align:center;">あなたは…</h1>
+        <div class="counter" id="drawCounter">0 / 0 人目</div>
+        <div class="draw-box">
+            <div class="draw-item">
+                <div class="draw-label" style="text-align:center;">コート</div>
+                <div class="draw-value-large" id="resCourt">-</div>
+            </div>
+            <div class="draw-item" id="teamDisplayWrapper">
+                <div class="draw-label" style="text-align:center;">チーム</div>
+                <div class="draw-value-large" id="resTeam">-</div>
+            </div>
+            <div class="draw-format-box">
+                <div class="draw-label" style="text-align:center;">形式</div>
+                <div class="draw-format-value" style="text-align:center;" id="resFormat">-</div>
             </div>
         </div>
-        <div class="format-row">
-            <div class="row-number">3</div>
-            <div class="format-buttons single">
-                <label class="format-item"><input type="checkbox" checked value="3" data-type="mitsudomoe" data-label="1 vs 1 vs 1" class="format-check">1 vs 1 vs 1</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">4</div>
-            <div class="format-buttons single">
-                <label class="format-item"><input type="checkbox" checked value="4" data-type="taiman" data-label="2 vs 2" class="format-check">2 vs 2</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">5</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="5" data-type="mitsudomoe" data-label="1 vs 2 vs 2" class="format-check">1 vs 2 vs 2</label>
-                <label class="format-item"><input type="checkbox" checked value="5" data-type="taiman" data-label="2 vs 3" class="format-check">2 vs 3</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">6</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="6" data-type="mitsudomoe" data-label="2 vs 2 vs 2" class="format-check">2 vs 2 vs 2</label>
-                <label class="format-item"><input type="checkbox" checked value="6" data-type="taiman" data-label="3 vs 3" class="format-check">3 vs 3</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">7</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="7" data-type="mitsudomoe" data-label="2 vs 2 vs 3" class="format-check">2 vs 2 vs 3</label>
-                <label class="format-item"><input type="checkbox" checked value="7" data-type="taiman" data-label="3 vs 4" class="format-check">3 vs 4</label>
-            </div>
-        </div>
-        <div class="format-row">
-            <div class="row-number">8</div>
-            <div class="format-buttons">
-                <label class="format-item"><input type="checkbox" checked value="8" data-type="mitsudomoe" data-label="2 vs 3 vs 3" class="format-check">2 vs 3 vs 3</label>
-                <label class="format-item"><input type="checkbox" checked value="8" data-type="taiman" data-label="4 vs 4" class="format-check">4 vs 4</label>
-            </div>
-        </div>
+        <button id="nextBtn" class="main-button" onclick="showNext()">押す</button>
     </div>
 
-    <div id="resultArea"></div>
+    <div id="resultSection">
+        <h1>結果</h1>
+        <div class="res-list" id="resList"></div>
+        <button class="main-button" onclick="backToSetup()">新しく始める</button>
+    </div>
 </div>
 
 <script>
-    const courtInput = document.getElementById('courtCount');
-    const memberInput = document.getElementById('memberCount');
+    const setupSection = document.getElementById('setupSection');
+    const drawSection = document.getElementById('drawSection');
+    const resultSection = document.getElementById('resultSection');
     const checkboxes = document.querySelectorAll('.format-check');
-    const resultArea = document.getElementById('resultArea');
-    const btnTaiman = document.getElementById('btnTaiman');
-    const btnMitsudomoe = document.getElementById('btnMitsudomoe');
+    const nextBtn = document.getElementById('nextBtn');
+    const viewLastResultBtn = document.getElementById('viewLastResultBtn');
 
-    let taimanActive = true;
-    let mitsudomoeActive = true;
-
-    [courtInput, memberInput].forEach(el => el.addEventListener('input', calculate));
-    checkboxes.forEach(el => el.addEventListener('change', () => {
-        syncButtonStateWithChecks();
-        calculate();
-    }));
+    let allPlayerRoles = [];
+    let currentDrawIndex = 0;
+    let finalHistory = [];
 
     function togglePreset(type) {
-        if (type === 'taiman') {
-            taimanActive = !taimanActive;
-            checkboxes.forEach(cb => { if(cb.dataset.type === 'taiman') cb.checked = taimanActive; });
-        } else {
-            mitsudomoeActive = !mitsudomoeActive;
-            checkboxes.forEach(cb => { if(cb.dataset.type === 'mitsudomoe') cb.checked = mitsudomoeActive; });
-        }
-        updateButtonUI();
-        calculate();
-    }
-
-    function syncButtonStateWithChecks() {
-        const taimanChecks = Array.from(checkboxes).filter(cb => cb.dataset.type === 'taiman');
-        const mitsudomoeChecks = Array.from(checkboxes).filter(cb => cb.dataset.type === 'mitsudomoe');
-        taimanActive = taimanChecks.some(cb => cb.checked);
-        mitsudomoeActive = mitsudomoeChecks.some(cb => cb.checked);
+        const btn = type === 'taiman' ? document.getElementById('btnTaiman') : document.getElementById('btnMitsudomoe');
+        const active = !btn.classList.contains('on');
+        checkboxes.forEach(cb => { if(cb.dataset.type === type) cb.checked = active; });
         updateButtonUI();
     }
 
     function updateButtonUI() {
-        btnTaiman.className = `btn btn-taiman ${taimanActive ? 'on' : 'off'}`;
-        btnMitsudomoe.className = `btn btn-mitsudomoe ${mitsudomoeActive ? 'on' : 'off'}`;
+        const tActive = Array.from(checkboxes).filter(cb => cb.dataset.type === 'taiman').some(cb => cb.checked);
+        const mActive = Array.from(checkboxes).filter(cb => cb.dataset.type === 'mitsudomoe').some(cb => cb.checked);
+        document.getElementById('btnTaiman').className = `btn btn-taiman ${tActive ? 'on' : 'off'}`;
+        document.getElementById('btnMitsudomoe').className = `btn btn-mitsudomoe ${mActive ? 'on' : 'off'}`;
     }
 
-    function calculate() {
-        const maxCourts = parseInt(courtInput.value);
-        const totalMembers = parseInt(memberInput.value);
-        const allowedFormats = Array.from(checkboxes)
-            .filter(cb => cb.checked)
-            .map(cb => ({ label: cb.dataset.label, size: parseInt(cb.value) }));
+    function startLottery() {
+        const maxCourts = parseInt(document.getElementById('courtCount').value);
+        const totalMembers = parseInt(document.getElementById('memberCount').value);
+        const allowedFormats = Array.from(checkboxes).filter(cb => cb.checked).map(cb => ({ label: cb.dataset.label, size: parseInt(cb.value) }));
 
-        if (!maxCourts || !totalMembers || allowedFormats.length === 0) {
-            resultArea.innerHTML = '<p class="empty-text">数値を入力してください</p>';
-            return;
-        }
+        if (!maxCourts || !totalMembers) { alert("コート数と人数を入力してください"); return; }
+        if (allowedFormats.length === 0) { alert("形式を選択してください"); return; }
 
         const avg = totalMembers / maxCourts;
         let bestResult = null;
         let minVariance = Infinity;
 
-        function solve(remaining, courtIdx, currentAssignments) {
+        function solve(remaining, courtIdx, current) {
             if (courtIdx === maxCourts) {
                 if (remaining === 0) {
-                    const variance = currentAssignments.reduce((acc, cur) => acc + Math.pow(cur.size - avg, 2), 0);
-                    if (variance < minVariance) {
-                        minVariance = variance;
-                        bestResult = [...currentAssignments];
-                    }
+                    const variance = current.reduce((acc, cur) => acc + Math.pow(cur.size - avg, 2), 0);
+                    if (variance < minVariance) { minVariance = variance; bestResult = [...current]; }
                 }
                 return;
             }
-
-            const sortedFormats = [...allowedFormats].sort((a, b) => Math.abs(a.size - avg) - Math.abs(b.size - avg));
-            for (const format of sortedFormats) {
-                if (remaining - format.size < 0) continue;
-                solve(remaining - format.size, courtIdx + 1, [...currentAssignments, format]);
+            for (const f of allowedFormats) {
+                if (remaining - f.size < 0) continue;
+                solve(remaining - f.size, courtIdx + 1, [...current, f]);
                 if (minVariance === 0) return;
             }
         }
-
         solve(totalMembers, 0, []);
 
-        if (!bestResult) {
-            resultArea.innerHTML = '<p class="empty-text" style="color: #ff3b30;">組み合わせなし</p>';
-            return;
-        }
+        if (!bestResult) { alert("組み合わせが見つかりません。設定を調整してください。"); return; }
 
-        let html = '';
-        bestResult.sort((a, b) => a.size - b.size).forEach((item, index) => {
-            const courtName = String.fromCharCode(65 + index);
-            html += `
-                <div class="court-card">
-                    <div class="court-info">
-                        <span class="court-name">コート ${courtName}</span>
-                        <span class="court-format">${item.label}</span>
-                    </div>
-                    <span class="court-count">${item.size}人</span>
-                </div>`;
+        let roles = [];
+        bestResult.forEach((court, idx) => {
+            const teamCounts = court.label.split(' vs ').map(s => parseInt(s));
+            const isAllSolo = teamCounts.every(c => c === 1);
+            
+            teamCounts.forEach((count, tIdx) => {
+                const teamLetter = String.fromCharCode(65 + tIdx);
+                for(let i=0; i<count; i++) {
+                    roles.push({
+                        courtNum: idx + 1,
+                        teamLet: teamLetter,
+                        isSolo: (count === 1),
+                        isAllSolo: isAllSolo,
+                        format: court.label
+                    });
+                }
+            });
         });
-        resultArea.innerHTML = html;
+
+        allPlayerRoles = roles.sort(() => Math.random() - 0.5);
+        currentDrawIndex = 0;
+        finalHistory = [];
+
+        setupSection.style.display = 'none';
+        drawSection.style.display = 'block';
+        resetDrawUI();
     }
 
-    calculate();
+    function resetDrawUI() {
+        document.getElementById('resCourt').innerText = '-';
+        document.getElementById('resTeam').innerText = '-';
+        document.getElementById('resFormat').innerText = '-';
+        document.getElementById('drawCounter').innerText = `0 / ${allPlayerRoles.length} 人目`;
+        nextBtn.innerText = '押す';
+    }
+
+    function showNext() {
+        if (currentDrawIndex < allPlayerRoles.length) {
+            const data = allPlayerRoles[currentDrawIndex];
+            document.getElementById('resCourt').innerText = data.courtNum;
+            const teamWrap = document.getElementById('teamDisplayWrapper');
+            const resTeam = document.getElementById('resTeam');
+            
+            if (data.isAllSolo) {
+                teamWrap.style.display = 'none';
+            } else {
+                teamWrap.style.display = 'block';
+                if (data.isSolo) {
+                    resTeam.innerHTML = `<span>${data.teamLet}</span><span class="solo-text">ソロ</span>`;
+                } else {
+                    resTeam.innerText = data.teamLet;
+                }
+            }
+            document.getElementById('resFormat').innerText = data.format;
+            finalHistory.push({ ...data });
+            currentDrawIndex++;
+            document.getElementById('drawCounter').innerText = `${currentDrawIndex} / ${allPlayerRoles.length} 人目`;
+            if (currentDrawIndex === allPlayerRoles.length) {
+                nextBtn.innerText = '全員完了';
+            } else {
+                nextBtn.innerText = '次の人がタップ';
+            }
+        } else {
+            showResultSection();
+        }
+    }
+
+    function showResultSection() {
+        if (finalHistory.length === 0) return;
+        
+        setupSection.style.display = 'none';
+        drawSection.style.display = 'none';
+        resultSection.style.display = 'block';
+        const list = document.getElementById('resList');
+        list.innerHTML = '';
+        finalHistory.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.className = 'res-item';
+            const teamDisp = item.isAllSolo ? 'ソロ' : `${item.teamLet}チーム ${item.isSolo ? ' (ソロ) ' : ''}`;
+            div.innerHTML = `
+                <div class="res-idx">${idx + 1}番</div>
+                <div class="res-main">${item.courtNum}コート / ${teamDisp}</div>
+                <div class="res-sub">${item.format}</div>
+            `;
+            list.appendChild(div);
+        });
+        
+        viewLastResultBtn.style.display = 'block';
+    }
+
+    function backToSetup() {
+        setupSection.style.display = 'block';
+        drawSection.style.display = 'none';
+        resultSection.style.display = 'none';
+        allPlayerRoles = [];
+        currentDrawIndex = 0;
+    }
+
+    checkboxes.forEach(cb => cb.addEventListener('change', updateButtonUI));
 </script>
 
 </body>
