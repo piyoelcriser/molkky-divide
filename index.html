@@ -10,11 +10,18 @@
 
     <style>
         :root {
+            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
             --apple-blue: #0071e3;
             --apple-dark: #1d1d1f;
             --apple-gray: #86868b;
             --glass-bg: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(255, 255, 255, 0.5);
+            --highlight-color: var(--apple-blue);
+        }
+
+        /* 青色部分のみを反転させるためのクラス */
+        .color-flip {
+            --highlight-color: #ff8e1c; 
         }
 
         * {
@@ -24,8 +31,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            /* 初期背景 */
-            background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
+            background: var(--bg-gradient);
             background-attachment: fixed;
             color: var(--apple-dark);
             display: flex;
@@ -34,7 +40,6 @@
             margin: 0;
             padding: 15px;
             touch-action: manipulation;
-            transition: background 0.4s ease; /* 背景変化を滑らかに */
         }
 
         .card {
@@ -98,23 +103,6 @@
             -webkit-appearance: none;
         }
 
-        .btn { 
-            flex: 1;
-            border-radius: 12px; 
-            font-size: 14px; 
-            font-weight: 600; 
-            padding: 14px 0; 
-            cursor: pointer; 
-            border: 1.5px solid transparent; 
-            text-align: center; 
-            transition: all 0.2s ease;
-            -webkit-appearance: none;
-        }
-        .btn-taiman.on { background: #0071e3; color: #fff; }
-        .btn-taiman.off { background: #fff; color: #0071e3; border-color: #0071e3; }
-        .btn-mitsudomoe.on { background: #3b82f6; color: #fff; }
-        .btn-mitsudomoe.off { background: #fff; color: #3b82f6; border-color: #3b82f6; }
-
         .format-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
         .format-row { display: flex; align-items: center; }
         .row-number { width: 24px; font-size: 16px; font-weight: 800; color: var(--apple-blue); margin-right: 12px; text-align: center; }
@@ -131,6 +119,7 @@
             align-items: center; 
             justify-content: center; 
             cursor: pointer;
+            text-align: center;
         }
         .format-item:has(input:checked) { background: var(--apple-dark); color: #fff; border-color: var(--apple-dark); }
         .format-item input { display: none; }
@@ -138,7 +127,18 @@
         .draw-box { background: #fff; border-radius: 24px; padding: 30px 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
         .draw-item { margin-bottom: 25px; }
         .draw-label { font-size: 18px; color: var(--apple-gray); font-weight: 700; margin-bottom: 10px; }
-        .draw-value-large { font-size: 100px; color: var(--apple-blue); font-weight: 900; line-height: 1; display: flex; flex-direction: column; align-items: center; }
+        
+        .draw-value-large { 
+            font-size: 100px; 
+            color: var(--highlight-color); 
+            font-weight: 900; 
+            line-height: 1; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            transition: color 0.1s ease;
+        }
+        
         .solo-text { font-size: 24px; color: var(--apple-gray); font-weight: 600; line-height: 1; margin-top: 5px; }
         .draw-format-box { border-top: 1px solid #f2f2f7; padding-top: 20px; }
         .draw-format-value { font-size: 20px; font-weight: 700; }
@@ -152,12 +152,12 @@
 
         .main-button, .secondary-button { 
             -webkit-appearance: none;
-            transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.1s ease;
+            transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease;
             user-select: none;
         }
 
         .main-button { 
-            background: var(--apple-blue); 
+            background: var(--highlight-color); 
             color: #fff; 
             border: none; 
             border-radius: 16px; 
@@ -172,8 +172,7 @@
 
         .main-button.active, .main-button:active { 
             transform: scale(0.92) !important; 
-            background-color: #005bb5 !important;
-            box-shadow: 0 2px 4px rgba(0, 113, 227, 0.2) !important;
+            opacity: 0.8;
         }
         
         .secondary-button { 
@@ -194,7 +193,7 @@
         }
     </style>
 </head>
-<body>
+<body id="mainBody">
 
 <div class="card">
     <div id="setupSection" style="display: block;">
@@ -210,18 +209,15 @@
             </div>
         </div>
         <p style="font-size:13px; font-weight:700; margin:0 0 12px 0;">許可する形式</p>
-        <div class="grid-row">
-            <button id="btnTaiman" onclick="togglePreset('taiman')" class="btn btn-taiman on">タイマン</button>
-            <button id="btnMitsudomoe" onclick="togglePreset('mitsudomoe')" class="btn btn-mitsudomoe on">三つ巴</button>
-        </div>
+        
         <div class="format-list">
-            <div class="format-row"><div class="row-number">2</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="2" data-type="taiman" data-label="1 vs 1" class="format-check">1 vs 1</label></div></div>
-            <div class="format-row"><div class="row-number">3</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="3" data-type="mitsudomoe" data-label="1 vs 1 vs 1" class="format-check">1 vs 1 vs 1</label></div></div>
-            <div class="format-row"><div class="row-number">4</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="4" data-type="taiman" data-label="2 vs 2" class="format-check">2 vs 2</label></div></div>
-            <div class="format-row"><div class="row-number">5</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="5" data-type="mitsudomoe" data-label="1 vs 2 vs 2" class="format-check">1 vs 2 vs 2</label><label class="format-item"><input type="checkbox" checked value="5" data-type="taiman" data-label="2 vs 3" class="format-check">2 vs 3</label></div></div>
-            <div class="format-row"><div class="row-number">6</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="6" data-type="mitsudomoe" data-label="2 vs 2 vs 2" class="format-check">2 vs 2 vs 2</label><label class="format-item"><input type="checkbox" checked value="6" data-type="taiman" data-label="3 vs 3" class="format-check">3 vs 3</label></div></div>
-            <div class="format-row"><div class="row-number">7</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="7" data-type="mitsudomoe" data-label="2 vs 2 vs 3" class="format-check">2 vs 2 vs 3</label><label class="format-item"><input type="checkbox" checked value="7" data-type="taiman" data-label="3 vs 4" class="format-check">3 vs 4</label></div></div>
-            <div class="format-row"><div class="row-number">8</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="8" data-type="mitsudomoe" data-label="2 vs 3 vs 3" class="format-check">2 vs 3 vs 3</label><label class="format-item"><input type="checkbox" checked value="8" data-type="taiman" data-label="4 vs 4" class="format-check">4 vs 4</label></div></div>
+            <div class="format-row"><div class="row-number">2</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="2" data-label="1 vs 1" class="format-check">1 vs 1</label></div></div>
+            <div class="format-row"><div class="row-number">3</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="3" data-label="1 vs 1 vs 1" class="format-check">1 vs 1 vs 1</label></div></div>
+            <div class="format-row"><div class="row-number">4</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="4" data-label="2 vs 2" class="format-check">2 vs 2</label></div></div>
+            <div class="format-row"><div class="row-number">5</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="5" data-label="1 vs 2 vs 2" class="format-check">1 vs 2 vs 2</label><label class="format-item"><input type="checkbox" value="5" data-label="2 vs 3" class="format-check">2 vs 3</label></div></div>
+            <div class="format-row"><div class="row-number">6</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="6" data-label="2 vs 2 vs 2" class="format-check">2 vs 2 vs 2</label><label class="format-item"><input type="checkbox" value="6" data-label="3 vs 3" class="format-check">3 vs 3</label></div></div>
+            <div class="format-row"><div class="row-number">7</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="7" data-label="2 vs 2 vs 3" class="format-check">2 vs 2 vs 3</label><label class="format-item"><input type="checkbox" value="7" data-label="3 vs 4" class="format-check">3 vs 4</label></div></div>
+            <div class="format-row"><div class="row-number">8</div><div class="format-buttons"><label class="format-item"><input type="checkbox" checked value="8" data-label="2 vs 3 vs 3" class="format-check">2 vs 3 vs 3</label><label class="format-item"><input type="checkbox" value="8" data-label="4 vs 4" class="format-check">4 vs 4</label></div></div>
         </div>
         <button class="main-button touch-btn" onclick="startLottery()">スタート</button>
         <button id="viewLastResultBtn" class="secondary-button touch-btn" onclick="showResultSection()">前回の結果</button>
@@ -261,22 +257,7 @@
     const checkboxes = document.querySelectorAll('.format-check');
     const nextBtn = document.getElementById('nextBtn');
     const viewLastResultBtn = document.getElementById('viewLastResultBtn');
-
-    // 背景色ランダム変更用 (明るめのパステル系) 
-    const bgColors = [
-        ['#e0e7ff', '#f1f5f9'],
-        ['#dcfce7', '#f1f5f9'],
-        ['#fef9c3', '#f1f5f9'],
-        ['#ffedd5', '#f1f5f9'],
-        ['#fae8ff', '#f1f5f9'],
-        ['#e0f2fe', '#f1f5f9'],
-        ['#fce7f3', '#f1f5f9']
-    ];
-
-    function changeBgColor() {
-        const pair = bgColors[Math.floor(Math.random() * bgColors.length)];
-        document.body.style.background = `linear-gradient(135deg, ${pair[0]} 0%, ${pair[1]} 100%)`;
-    }
+    const mainBody = document.getElementById('mainBody');
 
     // iOS Safari用沈むアクション
     document.querySelectorAll('.touch-btn').forEach(btn => {
@@ -289,19 +270,21 @@
     let currentDrawIndex = 0;
     let finalHistory = [];
 
-    function togglePreset(type) {
-        const btn = type === 'taiman' ? document.getElementById('btnTaiman') : document.getElementById('btnMitsudomoe');
-        const active = !btn.classList.contains('on');
-        checkboxes.forEach(cb => { if(cb.dataset.type === type) cb.checked = active; });
-        updateButtonUI();
-    }
-
-    function updateButtonUI() {
-        const tActive = Array.from(checkboxes).filter(cb => cb.dataset.type === 'taiman').some(cb => cb.checked);
-        const mActive = Array.from(checkboxes).filter(cb => cb.dataset.type === 'mitsudomoe').some(cb => cb.checked);
-        document.getElementById('btnTaiman').className = `btn btn-taiman ${tActive ? 'on' : 'off'}`;
-        document.getElementById('btnMitsudomoe').className = `btn btn-mitsudomoe ${mActive ? 'on' : 'off'}`;
-    }
+    // 排他的選択の設定 (5,6,7,8人) 
+    checkboxes.forEach(cb => {
+        cb.addEventListener('change', function() {
+            if (this.checked) {
+                const val = this.value;
+                if (["5", "6", "7", "8"].includes(val)) {
+                    checkboxes.forEach(other => {
+                        if (other !== this && other.value === val) {
+                            other.checked = false;
+                        }
+                    });
+                }
+            }
+        });
+    });
 
     function startLottery() {
         const maxCourts = parseInt(document.getElementById('courtCount').value);
@@ -358,7 +341,6 @@
         setupSection.style.display = 'none';
         drawSection.style.display = 'block';
         resetDrawUI();
-        changeBgColor(); // 開始時にも色を変える
     }
 
     function resetDrawUI() {
@@ -367,11 +349,13 @@
         document.getElementById('resFormat').innerText = '-';
         document.getElementById('drawCounter').innerText = `0 / ${allPlayerRoles.length} 人目`;
         nextBtn.innerText = 'タップ';
+        mainBody.classList.remove('color-flip');
     }
 
     function showNext() {
+        mainBody.classList.toggle('color-flip');
+
         if (currentDrawIndex < allPlayerRoles.length) {
-            changeBgColor(); // タップするたびに背景色を変更
             const data = allPlayerRoles[currentDrawIndex];
             document.getElementById('resCourt').innerText = data.courtNum;
             const teamWrap = document.getElementById('teamDisplayWrapper');
@@ -398,6 +382,7 @@
                 nextBtn.innerText = 'タップ';
             }
         } else {
+            mainBody.classList.remove('color-flip');
             showResultSection();
         }
     }
@@ -429,10 +414,8 @@
         resultSection.style.display = 'none';
         allPlayerRoles = [];
         currentDrawIndex = 0;
-        document.body.style.background = 'linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%)'; // 初期色に戻す
+        mainBody.classList.remove('color-flip');
     }
-
-    checkboxes.forEach(cb => cb.addEventListener('change', updateButtonUI));
 </script>
 
 </body>
