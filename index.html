@@ -10,7 +10,6 @@
 
     <style>
         :root {
-            --bg-gradient: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
             --apple-blue: #0071e3;
             --apple-dark: #1d1d1f;
             --apple-gray: #86868b;
@@ -25,7 +24,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: var(--bg-gradient);
+            /* 初期背景 */
+            background: linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%);
             background-attachment: fixed;
             color: var(--apple-dark);
             display: flex;
@@ -34,6 +34,7 @@
             margin: 0;
             padding: 15px;
             touch-action: manipulation;
+            transition: background 0.4s ease; /* 背景変化を滑らかに */
         }
 
         .card {
@@ -149,7 +150,6 @@
         .res-main { flex-grow: 1; font-weight: 700; font-size: 14px; }
         .res-sub { font-size: 10px; color: var(--apple-gray); text-align: right; line-height: 1.2; }
 
-        /* 沈むアクション用のスタイル */
         .main-button, .secondary-button { 
             -webkit-appearance: none;
             transition: transform 0.1s ease, background-color 0.2s ease, box-shadow 0.1s ease;
@@ -170,7 +170,6 @@
             margin-bottom: 12px; 
         }
 
-        /* activeクラス (JS制御)  または :active擬似クラス */
         .main-button.active, .main-button:active { 
             transform: scale(0.92) !important; 
             background-color: #005bb5 !important;
@@ -263,7 +262,23 @@
     const nextBtn = document.getElementById('nextBtn');
     const viewLastResultBtn = document.getElementById('viewLastResultBtn');
 
-    // iOS Safari用の沈むアクション処理
+    // 背景色ランダム変更用 (明るめのパステル系) 
+    const bgColors = [
+        ['#e0e7ff', '#f1f5f9'],
+        ['#dcfce7', '#f1f5f9'],
+        ['#fef9c3', '#f1f5f9'],
+        ['#ffedd5', '#f1f5f9'],
+        ['#fae8ff', '#f1f5f9'],
+        ['#e0f2fe', '#f1f5f9'],
+        ['#fce7f3', '#f1f5f9']
+    ];
+
+    function changeBgColor() {
+        const pair = bgColors[Math.floor(Math.random() * bgColors.length)];
+        document.body.style.background = `linear-gradient(135deg, ${pair[0]} 0%, ${pair[1]} 100%)`;
+    }
+
+    // iOS Safari用沈むアクション
     document.querySelectorAll('.touch-btn').forEach(btn => {
         btn.addEventListener('touchstart', () => btn.classList.add('active'), {passive: true});
         btn.addEventListener('touchend', () => btn.classList.remove('active'), {passive: true});
@@ -343,6 +358,7 @@
         setupSection.style.display = 'none';
         drawSection.style.display = 'block';
         resetDrawUI();
+        changeBgColor(); // 開始時にも色を変える
     }
 
     function resetDrawUI() {
@@ -355,6 +371,7 @@
 
     function showNext() {
         if (currentDrawIndex < allPlayerRoles.length) {
+            changeBgColor(); // タップするたびに背景色を変更
             const data = allPlayerRoles[currentDrawIndex];
             document.getElementById('resCourt').innerText = data.courtNum;
             const teamWrap = document.getElementById('teamDisplayWrapper');
@@ -374,10 +391,11 @@
             finalHistory.push({ ...data });
             currentDrawIndex++;
             document.getElementById('drawCounter').innerText = `${currentDrawIndex} / ${allPlayerRoles.length} 人目`;
+            
             if (currentDrawIndex === allPlayerRoles.length) {
                 nextBtn.innerText = '全員完了';
             } else {
-                nextBtn.innerText = '次の人がタップ';
+                nextBtn.innerText = 'タップ';
             }
         } else {
             showResultSection();
@@ -411,6 +429,7 @@
         resultSection.style.display = 'none';
         allPlayerRoles = [];
         currentDrawIndex = 0;
+        document.body.style.background = 'linear-gradient(135deg, #e0e7ff 0%, #f1f5f9 100%)'; // 初期色に戻す
     }
 
     checkboxes.forEach(cb => cb.addEventListener('change', updateButtonUI));
